@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.seckill.dao.SecKillDao">
+	<resultMap type="org.seckill.entity.Seckill" id="SeckillResult">
+		<id column="seckill_id" jdbcType="BIGINT" property="seckill_id"/>
+		<result column="name" jdbcType="VARCHAR" property="name"/>
+		<result column="number" jdbcType="INTEGER" property="number"/>
+		<result column="start_time" jdbcType="TIMESTAMP" property="start_time"/>
+		<result column="end_time" jdbcType="TIMESTAMP" property="end_time"/>
+		<result column="create_time" jdbcType="TIMESTAMP" property="create_time"/>
+	</resultMap>
+	<update id="reduceNumber">
+		update seckill set number = number - 1 where seckill_id = #{0}  and number > 0
+	</update>
+	
+	<select id="queryById" resultMap="SeckillResult" parameterType="java.lang.Long">
+		select seckill_id,name,start_time,end_time,create_time from seckill where seckill_id = #{seckillId}
+	</select>
+	
+	<select id="queryAll" resultMap="SeckillResult">
+		select seckill_id,name,start_time,end_time,create_time from seckill order by create_time desc limit #{0},#{1}
+	</select>
+	<select id="killByProcudure" statementType="CALLABLE" parameterType="java.util.Map">
+		call execute_seckill(
+		#{seckillId,jdbcType=BIGINT,mode=IN},
+		#{phone,jdbcType=VARCHAR,mode=IN},
+		#{killTime,jdbcType=TIMESTAMP,mode=IN},
+		#{result,jdbcType=INTEGER,mode=OUT}
+		)
+	</select>
+</mapper>
